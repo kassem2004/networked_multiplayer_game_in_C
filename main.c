@@ -3,12 +3,15 @@
 #include <string.h>
 #include <sys/socket.h>
 #include <netdb.h>
+#include "include/game_logic.h"
 
 #define MAX_PLAYERS 2
 #define BUF_SIZE 1024
 
 void server(){
-    int fd, player1_fd, player2_fd;
+    int fd;
+    int p1_grid[10][10];
+    int p2_grid[10][10];
     if ((fd = socket(AF_INET, SOCK_STREAM, 0)) == 0) { // create socket
         perror("Socket failed");
         exit(EXIT_FAILURE);
@@ -64,9 +67,15 @@ void server(){
     send(p1fd, buffer, strlen(buffer), 0);
     send(p2fd, buffer, strlen(buffer), 0);
 
+    recv(p1fd, buffer, BUF_SIZE, 0);
+    printf("Received setup confirmation from Player 1.\n");
+    recv(p2fd, buffer, BUF_SIZE, 0);
+    printf("Received setup confirmation from Player 2.\n");
+
+
     close(fd);
-    close(player1_fd);
-    close(player2_fd);
+    close(p1fd);
+    close(p2fd);
 }
 
 void client(int port){
@@ -93,10 +102,23 @@ void client(int port){
     }
 
     char buffer[BUF_SIZE];
-    if (recv(fd, buffer, BUF_SIZE, 0) > 0) {
-            printf("Server says: %s\n", buffer);
-        }
+    if (recv(fd, buffer, BUF_SIZE, 0) > 0) { //recieve initiation of game
+            printf("%s\n", buffer);
+    }
+    memset(buffer, 0, sizeof(buffer));
 
+    board_setup();
+
+    int setup_count = 0;
+    while (setup_count < 5) {
+        char player_input[20];
+        printf("Enter ship placement: ");
+        scanf("%s", player_input);
+        setup_count++;
+    }
+
+    strcpy(buffer, "Done\n");
+    send(fd, buffer, strlen(buffer), 0);
     close(fd);
 }
 
