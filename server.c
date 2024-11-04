@@ -68,10 +68,13 @@ void server() {
     send(p2fd, buffer, strlen(buffer), 0);
     memset(buffer, 0, BUF_SIZE);
 
-    for (int i = 0; i < 5; i++) { //recieve board placements from players
+    for (int i = 0; i < 5; i++) { //recieve board placements from player 1
         recv(p1fd, buffer, BUF_SIZE, 0);
         add_to_board(p1_grid, buffer);
         memset(buffer, 0, BUF_SIZE);
+    }
+
+    for (int i = 0; i < 5; i++) { //recieve board placements from player 2
         recv(p2fd, buffer, BUF_SIZE, 0);
         add_to_board(p2_grid, buffer);
         memset(buffer, 0, BUF_SIZE);

@@ -45,13 +45,12 @@ void client(int port) {
     board_setup();
 
     for (int i = 0; i < 5; i++) { //send board game setup
-        char player_input[20];
+        char player_input[25];
         printf("Enter ship placement: ");
         fgets(player_input, sizeof(player_input), stdin);
         //add_to_board(board, player_input);
         send(fd, player_input, strlen(player_input), 0);
     }
-    print_board(board);
 
     strcpy(buffer, "Done\n");
     send(fd, buffer, strlen(buffer), 0);
