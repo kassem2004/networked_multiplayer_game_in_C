@@ -101,3 +101,18 @@ void print_board(int board[10][10]){
         }
     }
 }
+
+int play_move(int board[10][10], char *move){
+    int row, col;
+    row = move[0] - 'A';
+    col = move[1] - '1';
+
+    if(board[row][col] == 0){
+        board[row][col] = 2; //2 indicates that this coordinate has been hit
+        return 0;
+    } else if(board[row][col] == 1){
+        board[row][col] = 3; //3 indicates that this coordinate has been hit and ship was on it
+        return 1;
+    }
+    return -1;
+}

@@ -1,4 +1,3 @@
-// server.c
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -80,8 +79,40 @@ void server() {
         memset(buffer, 0, BUF_SIZE);
     }
 
-    print_board(p1_grid);
-    print_board(p2_grid);
+    int outcome = -1;
+
+    //game started
+    while(1){
+        strcpy(buffer, "Play!");
+        send(p1fd, buffer, strlen(buffer), 0); //signal to play move
+        memset(buffer, 0, BUF_SIZE);
+        recv(p1fd, buffer, BUF_SIZE, 0); //move from p1
+        outcome = play_move(p2_grid, buffer);
+        if(outcome){
+            strcpy(buffer, "Hit!");
+            send(p1fd, buffer, strlen(buffer), 0);
+            memset(buffer, 0, BUF_SIZE);
+        } else {
+            strcpy(buffer, "Miss!");
+            send(p1fd, buffer, strlen(buffer), 0);
+            memset(buffer, 0, BUF_SIZE);
+        }
+
+        strcpy(buffer, "Play!");
+        send(p2fd, buffer, strlen(buffer), 0); //signal to start playing
+        memset(buffer, 0, BUF_SIZE);
+        recv(p2fd, buffer, BUF_SIZE, 0); //move from p2
+        outcome = play_move(p1_grid, buffer);
+        if(outcome){
+            strcpy(buffer, "Hit!");
+            send(p2fd, buffer, strlen(buffer), 0);
+            memset(buffer, 0, BUF_SIZE);
+        } else {
+            strcpy(buffer, "Miss!");
+            send(p2fd, buffer, strlen(buffer), 0);
+            memset(buffer, 0, BUF_SIZE);
+        }
+    }
 
     close(fd);
     close(p1fd);

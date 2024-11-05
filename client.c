@@ -48,12 +48,26 @@ void client(int port) {
         char player_input[25];
         printf("Enter ship placement: ");
         fgets(player_input, sizeof(player_input), stdin);
-        //add_to_board(board, player_input);
         send(fd, player_input, strlen(player_input), 0);
     }
 
-    strcpy(buffer, "Done\n");
-    send(fd, buffer, strlen(buffer), 0);
+    //game started
+    while(1){
+        char player_move[4];
+        recv(fd, buffer, BUF_SIZE, 0);
+        if(!strcmp(buffer, "Play!")){
+            memset(buffer, 0 ,BUF_SIZE);
+            printf("Enter coordinate of attack: ");
+            fgets(player_move, sizeof(player_move), stdin);
+            send(fd, player_move, strlen(player_move), 0);
+            recv(fd, buffer, BUF_SIZE, 0); 
+            if(!strcmp(buffer, "Hit!")){
+                printf("You Hit!\n");
+            } else if (!strcmp(buffer, "Miss!")){
+                printf("You Missed!\n");
+            }
+        }
+    }
 
     close(fd);
 }
