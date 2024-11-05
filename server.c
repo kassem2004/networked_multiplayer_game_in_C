@@ -67,15 +67,35 @@ void server() {
     send(p2fd, buffer, strlen(buffer), 0);
     memset(buffer, 0, BUF_SIZE);
 
-    for (int i = 0; i < 5; i++) { //recieve board placements from player 1
+    int p1_count = 0;
+    while(p1_count < 5) { //recieve board placements from player 1
         recv(p1fd, buffer, BUF_SIZE, 0);
-        add_to_board(p1_grid, buffer);
+        if(add_to_board(p1_grid, buffer) == 1){
+            memset(buffer, 0, BUF_SIZE);
+            strcpy(buffer, "Valid");
+            send(p1fd, buffer, strlen(buffer), 0);
+            p1_count++;
+        } else {
+            memset(buffer, 0, BUF_SIZE);
+            strcpy(buffer, "Invalid");
+            send(p1fd, buffer, strlen(buffer), 0);
+        }
         memset(buffer, 0, BUF_SIZE);
     }
 
-    for (int i = 0; i < 5; i++) { //recieve board placements from player 2
+    int p2_count = 0;
+    while(p2_count < 5) { //recieve board placements from player 2
         recv(p2fd, buffer, BUF_SIZE, 0);
-        add_to_board(p2_grid, buffer);
+        if(add_to_board(p2_grid, buffer) == 1){
+            memset(buffer, 0, BUF_SIZE);
+            strcpy(buffer, "Valid");
+            send(p2fd, buffer, strlen(buffer), 0);
+            p2_count++;
+        } else {
+            memset(buffer, 0, BUF_SIZE);
+            strcpy(buffer, "Invalid");
+            send(p2fd, buffer, strlen(buffer), 0);
+        }
         memset(buffer, 0, BUF_SIZE);
     }
 

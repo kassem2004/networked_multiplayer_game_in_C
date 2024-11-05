@@ -44,16 +44,25 @@ void client(int port) {
     memset(buffer, 0, BUF_SIZE);
     board_setup();
 
-    for (int i = 0; i < 5; i++) { //send board game setup
-        char player_input[25];
+    int count = 0;
+    while(count < 5) { //send board game setup
+        char player_input[100];
+        char valid[9];
         printf("Enter ship placement: ");
         fgets(player_input, sizeof(player_input), stdin);
         send(fd, player_input, strlen(player_input), 0);
+        recv(fd, valid, 9, 0);
+        if(!strcmp(valid, "Valid")){
+            count++;
+        } else {
+            printf("Invalid input, please make sure to follow instructions on input.\n");
+        }
+        memset(valid, 0, 9);
     }
 
     //game started
     while(1){
-        char player_move[4];
+        char player_move[40];
         recv(fd, buffer, BUF_SIZE, 0);
         if(!strcmp(buffer, "Play!")){
             memset(buffer, 0 ,BUF_SIZE);
@@ -67,6 +76,7 @@ void client(int port) {
                 printf("You Missed!\n");
             }
         }
+        memset(play_move, 0, 40);
     }
 
     close(fd);
