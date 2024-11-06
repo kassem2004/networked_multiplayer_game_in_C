@@ -69,7 +69,21 @@ int validate_direction(char *direction){
     }
 }
 
-int add_to_board(int grid[10][10], char *placement) {
+int check_piece(char *piece, char* placed_pieces[], int *p_count){
+    printf("1 Placed pieces: %s %s %s %s %s\n",placed_pieces[0], placed_pieces[1], placed_pieces[2], placed_pieces[3], placed_pieces[4]);
+    for(int i = 0; i < *p_count; i++){
+        if(strcmp(piece, placed_pieces[i]) == 0){
+            printf("2 Placed pieces: %s %s %s %s %s\n",placed_pieces[0], placed_pieces[1], placed_pieces[2], placed_pieces[3], placed_pieces[4]);
+            printf("Invalid Piece in loop %d: %s\n", i, placed_pieces[i]);
+            return 0;
+        }
+    }
+    //I WAS TRYING TO DO 'placed_pieces[*p_count] = piece' WHICH WAS THE PROBLEM!!! It was assiging the address of piece to that pointer in the array
+    placed_pieces[*p_count] = strdup(piece);//SPENT SO LONG ON THIS, PLEASE DON"T FORGET!!!!
+    return 1;
+}
+
+int add_to_board(int grid[10][10], char *placement, char *placed_pieces[], int *p_count) {
     char *piece;       
     char *coordinate;   
     char *direction;
@@ -80,6 +94,10 @@ int add_to_board(int grid[10][10], char *placement) {
     piece = strtok(placement, d);
     coordinate = strtok(NULL, d);
     direction = strtok(NULL, d);
+
+    if(piece == NULL || coordinate == NULL || direction == NULL){ //makes sure that there's 3 non-null inputs
+        return 0;
+    }
 
     trim_trailing_whitespace(direction);
 
@@ -96,6 +114,11 @@ int add_to_board(int grid[10][10], char *placement) {
     }
 
     if(validate_direction(direction) == 0){
+        return 0;
+    }
+
+    printf("Pre check Placed pieces: %s %s %s %s %s\n",placed_pieces[0], placed_pieces[1], placed_pieces[2], placed_pieces[3], placed_pieces[4]);
+    if(check_piece(piece, placed_pieces, p_count) == 0){
         return 0;
     }
 

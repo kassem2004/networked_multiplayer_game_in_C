@@ -68,9 +68,16 @@ void server() {
     memset(buffer, 0, BUF_SIZE);
 
     int p1_count = 0;
+    char *p1_placed_pieces[5] = {NULL};
+    /*for(int i = 0; i < 5; i++){
+        p1_placed_pieces[i] = malloc(15 * sizeof(char));
+    }
+    for (int i = 0; i < 5; i++) {
+        memset(p1_placed_pieces[i], 0, 15);
+    }*/
     while(p1_count < 5) { //recieve board placements from player 1
         recv(p1fd, buffer, BUF_SIZE, 0);
-        if(add_to_board(p1_grid, buffer) == 1){
+        if(add_to_board(p1_grid, buffer, p1_placed_pieces, &p1_count) == 1){
             memset(buffer, 0, BUF_SIZE);
             strcpy(buffer, "Valid");
             send(p1fd, buffer, strlen(buffer), 0);
@@ -82,11 +89,16 @@ void server() {
         }
         memset(buffer, 0, BUF_SIZE);
     }
+    /*
+    for(int i = 0; i < 5; i++){
+        free(p1_placed_pieces[i]);
+    }*/
 
     int p2_count = 0;
+    char *p2_placed_pieces[5] = {NULL};
     while(p2_count < 5) { //recieve board placements from player 2
         recv(p2fd, buffer, BUF_SIZE, 0);
-        if(add_to_board(p2_grid, buffer) == 1){
+        if(add_to_board(p2_grid, buffer, p2_placed_pieces, &p2_count) == 1){
             memset(buffer, 0, BUF_SIZE);
             strcpy(buffer, "Valid");
             send(p2fd, buffer, strlen(buffer), 0);
