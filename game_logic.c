@@ -70,17 +70,23 @@ int validate_direction(char *direction){
 }
 
 int check_piece(char *piece, char* placed_pieces[], int *p_count){
-    printf("1 Placed pieces: %s %s %s %s %s\n",placed_pieces[0], placed_pieces[1], placed_pieces[2], placed_pieces[3], placed_pieces[4]);
     for(int i = 0; i < *p_count; i++){
         if(strcmp(piece, placed_pieces[i]) == 0){
-            printf("2 Placed pieces: %s %s %s %s %s\n",placed_pieces[0], placed_pieces[1], placed_pieces[2], placed_pieces[3], placed_pieces[4]);
-            printf("Invalid Piece in loop %d: %s\n", i, placed_pieces[i]);
             return 0;
         }
     }
     //I WAS TRYING TO DO 'placed_pieces[*p_count] = piece' WHICH WAS THE PROBLEM!!! It was assiging the address of piece to that pointer in the array
     placed_pieces[*p_count] = strdup(piece);//SPENT SO LONG ON THIS, PLEASE DON"T FORGET!!!!
     return 1;
+}
+
+void print_board(int board[10][10]){
+    for(int i = 0; i < 10; i++){
+        for(int j = 0; j < 10; j++){
+            printf("%d", board[i][j]);
+        }
+        printf("\n");
+    }
 }
 
 int add_to_board(int grid[10][10], char *placement, char *placed_pieces[], int *p_count) {
@@ -117,7 +123,6 @@ int add_to_board(int grid[10][10], char *placement, char *placed_pieces[], int *
         return 0;
     }
 
-    printf("Pre check Placed pieces: %s %s %s %s %s\n",placed_pieces[0], placed_pieces[1], placed_pieces[2], placed_pieces[3], placed_pieces[4]);
     if(check_piece(piece, placed_pieces, p_count) == 0){
         return 0;
     }
@@ -134,35 +139,60 @@ int add_to_board(int grid[10][10], char *placement, char *placed_pieces[], int *
 
     switch(dir){
         case 'R':
+            if((col + moves) > 10){ //boundary check
+                return 0;
+            }
+            for(int i = 0; i < moves; i++){ //collision check
+                if(grid[row][col + i] == 1){
+                    return 0;
+                }
+            }
             for(int i = 0; i < moves; i++){
                 grid[row][col + i] = 1;
             }
             break;
         case 'L':
+            if((col - moves) < -1){
+                return 0;
+            }
+            for(int i = 0; i < moves; i++){
+                if(grid[row][col - i] == 1){
+                    return 0;
+                }
+            }
             for(int i = 0; i < moves; i++){
                 grid[row][col - i] = 1;
             }
             break;
         case 'U':
-            for(int i = 0; i < moves; i++){
-                grid[row + i][col] = 1;
+            if((row - moves) < -1){
+                return 0;
             }
-            break;
-        case 'D':
+            for(int i = 0; i < moves; i++){
+                if(grid[row - i][col] == 1){
+                    return 0;
+                }
+            }
             for(int i = 0; i < moves; i++){
                 grid[row - i][col] = 1;
             }
             break;
+        case 'D':
+            if((row + moves) > 10){
+                return 0;
+            }
+            for(int i = 0; i < moves; i++){
+                if(grid[row + i][col] == 1){
+                    return 0;
+                }
+            }
+            for(int i = 0; i < moves; i++){
+                grid[row + i][col] = 1;
+            }
+            break;
     }
+    print_board(grid);
     return 1;
-}
-
-void print_board(int board[10][10]){
-    for(int i = 0; i < 10; i++){
-        for(int j = 0; j < 10; j++){
-            printf("%d", board[i][j]);
-        }
-    }
 }
 
 int play_move(int board[10][10], char *move){
