@@ -48,6 +48,7 @@ void client(int port) {
     while(count < 5) { //send board game setup
         char player_input[100];
         char valid[9];
+        memset(valid, 0, 9);
         printf("Enter ship placement: ");
         fgets(player_input, sizeof(player_input), stdin);
         send(fd, player_input, strlen(player_input), 0);
@@ -57,7 +58,6 @@ void client(int port) {
         } else {
             printf("Invalid input, please make sure to follow instructions on input.\n");
         }
-        memset(valid, 0, 9);
     }
 
     //game started

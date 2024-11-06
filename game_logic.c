@@ -57,17 +57,14 @@ int validate_piece(char *piece){
     if(strcmp(piece, "Submarine") == 0 || strcmp(piece, "Carrier") == 0 || strcmp(piece, "Cruiser") == 0|| strcmp(piece, "Battleship") == 0|| strcmp(piece, "Destroyer") == 0){
         return 1;
     } else {
-        printf("%s", piece);
         return 0;
     }
 }
 
 int validate_direction(char *direction){
     if(strcmp(direction, "Up") == 0 || strcmp(direction, "Down") == 0 || strcmp(direction, "Left") == 0 || strcmp(direction, "Right") == 0){
-        printf("Valid: %s", direction);
         return 1;
     } else {
-        printf("%s", direction);
         return 0;
     }
 }
@@ -80,7 +77,6 @@ int add_to_board(int grid[10][10], char *placement) {
     int row, col;
     int moves = -1;
     char d[] = " ";
-    printf("%s", placement);
     piece = strtok(placement, d);
     coordinate = strtok(NULL, d);
     direction = strtok(NULL, d);
@@ -90,8 +86,6 @@ int add_to_board(int grid[10][10], char *placement) {
     dir = direction[0];
     row = coordinate[0] - 'A';
     col = atoi(&coordinate[1]) - 1;
-
-    printf("%d %d %s %s\n", row, col, piece, direction);
 
     if(validate_coordinate(row, col) == 0){
         return 0;
