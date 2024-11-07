@@ -112,39 +112,81 @@ void server() {
     }
 
     int outcome = -1;
+    int p1_done = 1;
+    int p2_done = 1;
+    int winner = 0;
 
     //game started
     while(1){
+        do{
         strcpy(buffer, "Play!");
         send(p1fd, buffer, strlen(buffer), 0); //signal to play move
         memset(buffer, 0, BUF_SIZE);
         recv(p1fd, buffer, BUF_SIZE, 0); //move from p1
         outcome = play_move(p2_grid, buffer);
-        if(outcome){
+        printf("Check 3: %d\n", outcome);
+        if(outcome == 2){
+            strcpy(buffer, "Dup!");
+            send(p1fd, buffer, strlen(buffer), 0);
+            memset(buffer, 0, BUF_SIZE);
+        } else if(outcome){
             strcpy(buffer, "Hit!");
             send(p1fd, buffer, strlen(buffer), 0);
             memset(buffer, 0, BUF_SIZE);
+            p1_done = 0;
         } else {
             strcpy(buffer, "Miss!");
             send(p1fd, buffer, strlen(buffer), 0);
             memset(buffer, 0, BUF_SIZE);
+            p1_done = 0;
+        }
+        }while(p1_done);
+        p1_done = 1;
+        if(!check_win(p2_grid)){
+            winner = 1;
+            strcpy(buffer, "Done!");
+            send(p1fd, buffer, strlen(buffer), 0);
+            send(p2fd, buffer, strlen(buffer), 0);
+            memset(buffer, 0, BUF_SIZE);
+            break;
         }
 
+        do{
         strcpy(buffer, "Play!");
         send(p2fd, buffer, strlen(buffer), 0); //signal to start playing
         memset(buffer, 0, BUF_SIZE);
         recv(p2fd, buffer, BUF_SIZE, 0); //move from p2
         outcome = play_move(p1_grid, buffer);
-        if(outcome){
+        //printf("Check 3: %d\n", outcome);
+        if(outcome == 2){
+            strcpy(buffer, "Dup!");
+            send(p2fd, buffer, strlen(buffer), 0);
+            memset(buffer, 0, BUF_SIZE);
+        } else if(outcome){
             strcpy(buffer, "Hit!");
             send(p2fd, buffer, strlen(buffer), 0);
             memset(buffer, 0, BUF_SIZE);
+            p2_done = 0;
         } else {
             strcpy(buffer, "Miss!");
             send(p2fd, buffer, strlen(buffer), 0);
             memset(buffer, 0, BUF_SIZE);
+            p2_done = 0;
+        }
+        }while(p2_done);
+        p2_done = 0;
+        if(!check_win(p1_grid)){
+            winner = 2;
+            strcpy(buffer, "Done!");
+            send(p1fd, buffer, strlen(buffer), 0);
+            send(p2fd, buffer, strlen(buffer), 0);
+            memset(buffer, 0, BUF_SIZE);
+            break;
         }
     }
+    sprintf(buffer, "Game Over! The winner is Player %d!!!! Congrats and Goodbye!\n", winner);
+    send(p1fd, buffer, strlen(buffer), 0);
+    send(p2fd, buffer, strlen(buffer), 0);
 
     close(fd);
     close(p1fd);

@@ -191,18 +191,16 @@ int add_to_board(int grid[10][10], char *placement, char *placed_pieces[], int *
             }
             break;
     }
-    print_board(grid);
     return 1;
 }
 
 int play_move(int board[10][10], char *move){
     int row, col;
+    trim_trailing_whitespace(move);
+    //printf("Check 4\n");
     row = move[0] - 'A';
-    if(strlen(move) == 3){
-        col = atoi(&move[1]) - 1; //reminder, arrays decay to pointers of first element when passed into function
-    } else {                        //but when you specificy a certain index, the value is passed in not a pointer
-        col = move[1] - '1';
-    }
+    col = atoi(&move[1]) - 1;
+    //printf("Check 5: %d %d\n", row, col);
 
     if(board[row][col] == 0){
         board[row][col] = 2; //2 indicates that this coordinate has been hit
@@ -210,6 +208,19 @@ int play_move(int board[10][10], char *move){
     } else if(board[row][col] == 1){
         board[row][col] = 3; //3 indicates that this coordinate has been hit and ship was on it
         return 1;
+    } else if(board[row][col] > 1){
+        return 2;
     }
     return -1;
+}
+
+int check_win(int grid[10][10]){
+    for(int i = 0; i < 10; i ++){
+        for(int j = 0; j < 10; j ++){
+            if(grid[i][j] == 1){
+                return 1;
+            }
+        }
+    }
+    return 0;
 }

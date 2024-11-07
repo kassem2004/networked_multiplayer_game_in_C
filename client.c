@@ -60,9 +60,9 @@ void client(int port) {
         }
     }
 
+    char player_move[40];
     //game started
     while(1){
-        char player_move[40];
         recv(fd, buffer, BUF_SIZE, 0);
         if(!strcmp(buffer, "Play!")){
             memset(buffer, 0 ,BUF_SIZE);
@@ -74,9 +74,15 @@ void client(int port) {
                 printf("You Hit!\n");
             } else if (!strcmp(buffer, "Miss!")){
                 printf("You Missed!\n");
+            } else if(!strcmp(buffer, "Dup!")){
+                printf("You have already hit this area! Please input a coordinate you have not hit.\n");
             }
+        } else if(!strcmp(buffer, "Done!")){
+            recv(fd, buffer, BUF_SIZE, 0);
+            printf("%s", buffer);
+            break;
         }
-        memset(play_move, 0, 40);
+        memset(player_move, 0, 40);
     }
 
     close(fd);

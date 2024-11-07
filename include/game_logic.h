@@ -11,5 +11,6 @@ void board_setup();
 int add_to_board(int grid[10][10], char *placement, char *placed_pieces[], int *p_count);
 void print_board(int board[10][10]);
 int play_move(int grid[10][10], char *move);
+int check_win(int grid[10][10]);
 
 #endif
